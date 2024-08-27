@@ -22,7 +22,6 @@ import (
 // @BasePath	/
 func main() {
 	app := fiber.New()
-
 	app.Use(cors.New())
 	app.Static("/swagger", "./swagger")
 	app.Get("/swagger/*", swagger.HandlerDefault)

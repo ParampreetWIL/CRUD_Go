@@ -4,6 +4,7 @@ This is the simple ToDo API implemented in GoLang with Fiber framework. This pro
 
 ## Steps to Run
 
-1. Look for username and password in `docker-compose.yml` in root directory.
-2. Substitute the username and password in `postgres://<username>:<password>@localhost:5431/crud_go`
-3. Run the project as `DATABASE_URL=postgres://bluedog:woof@localhost:5431/crud_go go run .`
+1. Start postgresql Docker container with command `docker compose up`
+2. Look for username and password in `docker-compose.yml` in root directory.
+3. Substitute the username and password in `postgres://<username>:<password>@localhost:5431/crud_go`
+4. Run the project as `DATABASE_URL=postgres://bluedog:woof@localhost:5431/crud_go go run .`

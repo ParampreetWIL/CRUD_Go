@@ -1,0 +1,30 @@
+# Binaries
+*.exe
+*.out
+*.test
+
+# Dependencies
+vendor/
+
+# Build directories
+build/
+dist/
+
+# IDE/editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS Finder files
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Environment files
+.env
+
+# Logs
+*.log
+tmp/

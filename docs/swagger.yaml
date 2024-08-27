@@ -1,0 +1,152 @@
+basePath: /
+definitions:
+  database.AddTaskParams:
+    properties:
+      info:
+        type: string
+      name:
+        type: string
+    type: object
+  database.Task:
+    properties:
+      id:
+        type: integer
+      info:
+        type: string
+      isdone:
+        type: boolean
+      name:
+        type: string
+    type: object
+  database.UpdateTaskParams:
+    properties:
+      id:
+        type: integer
+      info:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: parampreets.rai@thewitslab.com
+    name: Parampreet Singh Rai
+  description: API for CRUD Operations or a TODO List.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: CRUD GO API
+  version: "1.0"
+paths:
+  /:
+    get:
+      description: get list of all tasks
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/database.Task'
+        "400":
+          description: Bad Request
+          schema: {}
+      summary: Show all tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Add new task to ToDo List as not done
+      parameters:
+      - description: Task object
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/database.AddTaskParams'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/database.Task'
+        "400":
+          description: Bad Request
+          schema: {}
+      summary: Adds a task
+      tags:
+      - tasks
+  /{id}:
+    delete:
+      description: Delete a task with given id
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema: {}
+      summary: Delete a task
+      tags:
+      - tasks
+  /edit:
+    post:
+      consumes:
+      - application/json
+      description: Edit the task with the given id
+      parameters:
+      - description: Update Task Params
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/database.UpdateTaskParams'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema: {}
+      summary: Edit a task
+      tags:
+      - tasks
+securityDefinitions:
+  OAuth2AccessCode:
+    authorizationUrl: https://example.com/oauth/authorize
+    flow: accessCode
+    scopes:
+      admin: Grants read and write access to administrative information
+    tokenUrl: https://example.com/oauth/token
+    type: oauth2
+  OAuth2Application:
+    flow: application
+    scopes:
+      admin: Grants read and write access to administrative information
+      write: Grants write access
+    tokenUrl: https://example.com/oauth/token
+    type: oauth2
+  OAuth2Implicit:
+    authorizationUrl: https://example.com/oauth/authorize
+    flow: implicit
+    scopes:
+      admin: Grants read and write access to administrative information
+      write: Grants write access
+    type: oauth2
+  OAuth2Password:
+    flow: password
+    scopes:
+      admin: Grants read and write access to administrative information
+      read: Grants read access
+      write: Grants write access
+    tokenUrl: https://example.com/oauth/token
+    type: oauth2
+swagger: "2.0"

@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-
 )
 
 const addTask = `-- name: AddTask :one
@@ -140,18 +139,25 @@ func (q *Queries) GetPendingTasks(ctx context.Context) ([]Task, error) {
 const updateTask = `-- name: UpdateTask :exec
 UPDATE tasks
 	set name = $2,
-	info = $3
+	info = $3,
+	isDone = $4
 WHERE id = $1
 `
 
 type UpdateTaskParams struct {
-	ID   int64
-	Name string
-	Info string
+	ID     int64
+	Name   string
+	Info   string
+	Isdone bool
 }
 
 func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) error {
-	_, err := q.db.Exec(ctx, updateTask, arg.ID, arg.Name, arg.Info)
+	_, err := q.db.Exec(ctx, updateTask,
+		arg.ID,
+		arg.Name,
+		arg.Info,
+		arg.Isdone,
+	)
 	return err
 }
 

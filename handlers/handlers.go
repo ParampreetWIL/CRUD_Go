@@ -85,7 +85,7 @@ func EditTaskHandler(c *fiber.Ctx) error {
 		c.SendStatus(500)
 		return err
 	}
-
+	fmt.Println(task)
 	err := db.UpdateTask(ctx, *task)
 	if err != nil {
 		c.SendStatus(500)

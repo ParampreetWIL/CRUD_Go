@@ -22,7 +22,8 @@ RETURNING *;
 -- name: UpdateTask :exec
 UPDATE tasks
 	set name = $2,
-	info = $3
+	info = $3,
+	isDone = $4
 WHERE id = $1;
 
 -- name: UpdateTaskAsDone :exec

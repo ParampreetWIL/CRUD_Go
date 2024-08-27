@@ -181,6 +181,9 @@ const docTemplate = `{
                 "info": {
                     "type": "string"
                 },
+                "isdone": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 }

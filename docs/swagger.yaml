@@ -24,6 +24,8 @@ definitions:
         type: integer
       info:
         type: string
+      isdone:
+        type: boolean
       name:
         type: string
     type: object

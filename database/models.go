@@ -5,11 +5,21 @@
 package database
 
 import (
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Task struct {
 	ID     int64
 	Name   string
-	Info   string
+	Info   pgtype.Text
 	Isdone bool
+}
+
+type User struct {
+	ID         int32
+	EmailToken string
+	JwtToken   string
+	Name       pgtype.Text
+	CreatedAt  pgtype.Timestamp
+	UpdatedAt  pgtype.Timestamp
 }

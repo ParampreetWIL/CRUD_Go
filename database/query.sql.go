@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+
 )
 
 const addTask = `-- name: AddTask :one
@@ -33,6 +34,37 @@ func (q *Queries) AddTask(ctx context.Context, arg AddTaskParams) (Task, error) 
 		&i.Name,
 		&i.Info,
 		&i.Isdone,
+	)
+	return i, err
+}
+
+const addUser = `-- name: AddUser :one
+INSERT INTO users (
+	email_token,
+	jwt_token,
+	name
+) VALUES (
+	$1, $2, $3
+)
+RETURNING id, email_token, jwt_token, name, created_at, updated_at
+`
+
+type AddUserParams struct {
+	EmailToken string
+	JwtToken   string
+	Name       string
+}
+
+func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) {
+	row := q.db.QueryRow(ctx, addUser, arg.EmailToken, arg.JwtToken, arg.Name)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.EmailToken,
+		&i.JwtToken,
+		&i.Name,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
@@ -125,6 +157,38 @@ func (q *Queries) GetPendingTasks(ctx context.Context) ([]Task, error) {
 			&i.Name,
 			&i.Info,
 			&i.Isdone,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserByJWT = `-- name: GetUserByJWT :many
+SELECT id, email_token, jwt_token, name, created_at, updated_at FROM users 
+WHERE jwt_token = $1
+`
+
+func (q *Queries) GetUserByJWT(ctx context.Context, jwtToken string) ([]User, error) {
+	rows, err := q.db.Query(ctx, getUserByJWT, jwtToken)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.EmailToken,
+			&i.JwtToken,
+			&i.Name,
+			&i.CreatedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

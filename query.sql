@@ -19,6 +19,20 @@ INSERT INTO tasks (
 )
 RETURNING *;
 
+-- name: AddUser :one
+INSERT INTO users (
+	email_token,
+	jwt_token,
+	name
+) VALUES (
+	$1, $2, $3
+)
+RETURNING *;
+
+-- name: GetUserByJWT :many
+SELECT * FROM users 
+WHERE jwt_token = $1;
+
 -- name: UpdateTask :exec
 UPDATE tasks
 	set name = $2,

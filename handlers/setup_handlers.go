@@ -41,6 +41,9 @@ func SetupRoutes(app *fiber.App, viper *viper.Viper, db *database.Queries, vault
 		return GoogleOAuthRedirect(c, db, ctx, oauthConfig)
 	})
 	app.Get("/oauth/redirect", func(c *fiber.Ctx) error {
-		return GoogleOAuthLogin(c, db, ctx, oauthConfig, vault_client)
+		return GoogleOAuthLogin(c, db, ctx, oauthConfig, vault_client, viper)
+	})
+	app.Post("/profile", func(c *fiber.Ctx) error {
+		return GetUserProfile(c, db, ctx, viper)
 	})
 }

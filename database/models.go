@@ -11,7 +11,7 @@ import (
 type Task struct {
 	ID     int64
 	Name   string
-	Info   pgtype.Text
+	Info   string
 	Isdone bool
 }
 
@@ -19,7 +19,7 @@ type User struct {
 	ID         int32
 	EmailToken string
 	JwtToken   string
-	Name       pgtype.Text
+	Name       string
 	CreatedAt  pgtype.Timestamp
 	UpdatedAt  pgtype.Timestamp
 }

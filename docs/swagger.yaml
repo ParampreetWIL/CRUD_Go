@@ -29,6 +29,30 @@ definitions:
       name:
         type: string
     type: object
+  structures.JWTToken:
+    properties:
+      accessToken:
+        type: string
+    type: object
+  structures.User:
+    properties:
+      email:
+        type: string
+      family_name:
+        type: string
+      given_name:
+        type: string
+      id:
+        type: string
+      locale:
+        type: string
+      name:
+        type: string
+      picture:
+        type: string
+      verified_email:
+        type: boolean
+    type: object
 host: localhost:3000
 info:
   contact:
@@ -121,4 +145,47 @@ paths:
       summary: Edit a task
       tags:
       - tasks
+  /login:
+    get:
+      consumes:
+      - application/json
+      description: Redirects the user to Google's OAuth 2.0 authentication page to
+        start the login process.
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirected to Google OAuth
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Redirect to Google OAuth
+      tags:
+      - Authentication
+  /profile:
+    post:
+      consumes:
+      - application/json
+      description: Get profile data with JWT Token
+      parameters:
+      - description: JWT Token
+        in: body
+        name: jwt
+        required: true
+        schema:
+          $ref: '#/definitions/structures.JWTToken'
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: User details
+          schema:
+            $ref: '#/definitions/structures.User'
+        "401":
+          description: Unauthorized
+      summary: Get the profile data without password
+      tags:
+      - JWT
 swagger: "2.0"

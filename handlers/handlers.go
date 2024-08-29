@@ -12,6 +12,7 @@ import (
 	structures "github.com/ParampreetWIL/CRUD_Go/structs"
 	"github.com/gofiber/fiber/v2"
 	"github.com/hashicorp/vault/api"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -107,7 +108,7 @@ func DeleteTaskHandler(c *fiber.Ctx, db *database.Queries, ctx context.Context) 
 	return c.SendStatus(200)
 }
 
-func GoogleOAuthLogin(c *fiber.Ctx, db *database.Queries, ctx context.Context, oauthConfig *oauth2.Config, vault_client *api.Client) error {
+func GoogleOAuthLogin(c *fiber.Ctx, db *database.Queries, ctx context.Context, oauthConfig *oauth2.Config, vault_client *api.Client, viper *viper.Viper) error {
 	code := c.Query("code") //get code from query params for generating token
 	if code == "" {
 		return c.Status(fiber.StatusInternalServerError).SendString("Failed to exchange token")
@@ -133,21 +134,51 @@ func GoogleOAuthLogin(c *fiber.Ctx, db *database.Queries, ctx context.Context, o
 		return c.Status(fiber.StatusInternalServerError).SendString("Error unmarshal json body " + err.Error())
 	}
 
-	fmt.Println(user)
-
 	vault_token, err := auth.Tokenize(vault_client, user.Email)
 
 	if err != nil {
 		c.SendStatus(fiber.StatusInternalServerError)
 	}
 
+	jwt_token, err := auth.GenerateJWT(user, viper.GetString("JWT_SECRET_KEY"))
+
+	if err != nil {
+		fmt.Println("Error in JWT Generate Token: ", err)
+	}
+
 	db.AddUser(ctx, database.AddUserParams{
 		EmailToken: vault_token,
-		JwtToken:   "ToDo",
+		JwtToken:   jwt_token,
 		Name:       user.Name,
 	})
 
-	return c.Status(fiber.StatusOK).JSON(user) //return user info
+	return c.Status(fiber.StatusOK).JSON(structures.JWTToken{
+		AccessToken: jwt_token,
+	}) //return user info
+}
+
+// @Summary Get the profile data without password
+// @Description Get profile data with JWT Token
+// @Tags JWT
+// @Param jwt body structures.JWTToken true "JWT Token"
+// @Accept json
+// @Produce json
+// @Success 302 {object} structures.User "User details"
+// @Failure 401
+// @Router /profile [post]
+func GetUserProfile(c *fiber.Ctx, db *database.Queries, ctx context.Context, viper *viper.Viper) error {
+	jwt_token := new(structures.JWTToken)
+	c.BodyParser(jwt_token)
+
+	user, err := auth.DecryptJWT(jwt_token.AccessToken, viper.GetString("JWT_SECRET_KEY"))
+
+	if err == nil {
+		return c.JSON(user)
+	}
+
+	fmt.Println(err)
+
+	return c.SendStatus(401)
 }
 
 // @Summary Redirect to Google OAuth
@@ -156,9 +187,10 @@ func GoogleOAuthLogin(c *fiber.Ctx, db *database.Queries, ctx context.Context, o
 // @Accept json
 // @Produce json
 // @Success 302 {string} string "Redirected to Google OAuth"
-// @Failure 500 {object} fiber.Error "Internal Server Error"
+// @Failure 500 {object} error "Internal Server Error"
 // @Router /login [get]
 func GoogleOAuthRedirect(c *fiber.Ctx, _ *database.Queries, _ context.Context, oauthConfig *oauth2.Config) error {
 	url := oauthConfig.AuthCodeURL("state")
+	fmt.Println("Login request")
 	return c.Redirect(url)
 }

@@ -66,6 +66,9 @@ func main() {
 	app.Static("/swagger", "./swagger")
 	app.Get("/swagger/*", swagger.HandlerDefault)
 	handlers.SetupRoutes(app, viper, db, vault_client)
+	err = app.Listen(":" + viper.GetString("SERVER_PORT"))
 
-	app.Listen(":3000")
+	if err != nil {
+		fmt.Println(err)
+	}
 }

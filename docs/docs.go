@@ -115,6 +115,70 @@ const docTemplate = `{
                 }
             }
         },
+        "/login": {
+            "get": {
+                "description": "Redirects the user to Google's OAuth 2.0 authentication page to start the login process.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Redirect to Google OAuth",
+                "responses": {
+                    "302": {
+                        "description": "Redirected to Google OAuth",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "post": {
+                "description": "Get profile data with JWT Token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "JWT"
+                ],
+                "summary": "Get the profile data without password",
+                "parameters": [
+                    {
+                        "description": "JWT Token",
+                        "name": "jwt",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/structures.JWTToken"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "User details",
+                        "schema": {
+                            "$ref": "#/definitions/structures.User"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
         "/{id}": {
             "delete": {
                 "description": "Delete a task with given id",
@@ -186,6 +250,43 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "structures.JWTToken": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "structures.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "family_name": {
+                    "type": "string"
+                },
+                "given_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "picture": {
+                    "type": "string"
+                },
+                "verified_email": {
+                    "type": "boolean"
                 }
             }
         }

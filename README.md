@@ -1,6 +1,6 @@
 # CRUD GoLang
 
-This is the simple ToDo API implemented in GoLang with Fiber framework. This project uses SQLc and PGX to interact with the database.
+Simple ToDo API implemented in GoLang with Fiber framework. This project uses SQLc and PGX to interact with the database.
 
 
 ## Steps to Run
